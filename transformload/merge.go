@@ -1,16 +1,15 @@
-package main
+package transformload
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/LucasDSF7/data-warehouse-iluminacao-publica/postgres"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Extração de dados do sistema da Exati para table de staging genérica
 // com todas colunas tipo TEXT. Necessário casting para types apropriádos.
-func mergeDimPontoServico(dbpool *pgxpool.Pool) {
+func MergeDimPontoServico(dbpool *pgxpool.Pool) {
 	query := `MERGE INTO dw.dim_ponto_servico t
 	USING staging.ponto_servico s
 	ON t.id_ponto_servico = s."ID Ponto de serviço"::integer
@@ -133,10 +132,4 @@ func mergeDimPontoServico(dbpool *pgxpool.Pool) {
 	if err != nil {
 		fmt.Println(err)
 	}
-}
-
-func main() {
-	dbpool := postgres.GetDriverConecta()
-	defer dbpool.Close()
-	mergeDimPontoServico(dbpool)
 }
