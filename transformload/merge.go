@@ -127,6 +127,10 @@ func MergeDimPontoServico(dbpool *pgxpool.Pool) {
 		COALESCE(s."Classe de Iluminação da Via Pedestre", 'Não se aplica'),
 		COALESCE(s."idComando", 'Não preenchido')
 	);
+
+	UPDATE dw.dim_ponto_servico
+	SET data_modificacao = CURRENT_DATE
+	WHERE ponto_servico_key = -1;
 	`
 	_, err := dbpool.Exec(context.Background(), query)
 	if err != nil {

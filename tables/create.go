@@ -41,14 +41,14 @@ func DimLCUTable(dbpool *pgxpool.Pool) {
 	COMMENT ON COLUMN dw.dim_lcu.data_validacao_linha IS 'A data de inserção da linha na table dim_lcu.';
 	COMMENT ON COLUMN dw.dim_lcu.data_expiracao_linha IS 'A data de expiração da linha na table dim_lcu.';
 	COMMENT ON COLUMN dw.dim_lcu.indicador_linha_valida IS 'Indica se a linha é a mais recente (Corrente) ou se já foi substituída por um registro mais recente (Expirada).';
-	CREATE INDEX idx_dim_lcu ON dw.dim_lcu (deveui);
+	CREATE INDEX IF NOT EXISTS idx_dim_lcu ON dw.dim_lcu (deveui);
 
 	INSERT INTO dw.dim_lcu (
 		lcu_key
 	)
 	VALUES (
 		-1
-	);
+	) ON CONFLICT (lcu_key) DO NOTHING;
 	`
 	_, err := dbpool.Exec(context.Background(), query)
 	if err != nil {
@@ -116,14 +116,14 @@ func DimPontoServicoTable(dbpool *pgxpool.Pool) {
 	COMMENT ON COLUMN dw.dim_ponto_servico.idcomando IS 'Informa qual o id do comando em que o ponto de serviço está instalado. Caso o valor seja 0, desconsiderar a existência de comando para esse ponto de serviço.';
 	COMMENT ON COLUMN dw.dim_ponto_servico.data_modificacao IS 'Data em que foi inserido ou atualizado informação na linha.';
 	COMMENT ON TABLE dw.dim_ponto_servico IS 'Dimensão SCD Type 1 de pontos de serviços da concessão de iluminação pública. Essa dimensão é Type 1, pois é a forma mais natural de tratar dados para a gerência. Quando, por exemplo, uma plaqueta muda de valor, todos os registros antigos do mesmo ponto de serviço devem acompanhar a mudança.';
-	CREATE INDEX idx_dim_id_ponto_servico ON dw.dim_ponto_servico (id_ponto_servico);
+	CREATE INDEX IF NOT EXISTS idx_dim_id_ponto_servico ON dw.dim_ponto_servico (id_ponto_servico);
 
 	INSERT INTO dw.dim_ponto_servico (
 		ponto_servico_key
 	)
 	VALUES (
 		-1
-	)
+	) ON CONFLICT (ponto_servico_key) DO NOTHING
 	`
 	_, err := dbpool.Exec(context.Background(), query)
 	if err != nil {
