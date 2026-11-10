@@ -27,7 +27,9 @@ func StagingComunicacoesIot(dbpool *pgxpool.Pool) {
 		corrente DECIMAL(5,2),
 		potencia DECIMAL(5,2),
 		fator_potencia DECIMAL(3,2),
-		energia_consumida DECIMAL(11,2)
+		energia_consumida DECIMAL(11,2),
+		rssi SMALLINT,
+		snr DECIMAL (4,1)
 	)
 	
 	`
