@@ -37,7 +37,7 @@ func UpdateInsertDimLcu(dbpool *pgxpool.Pool, cidade string) {
 			s.nome_lcu,
 			s.id_exati_lcu,
 			s.datahora_cadastro,
-			'%s',
+			'$1',
 			s.latitude_lcu,
 			s.longitude_lcu,
 			s.id_grupo_ip,
@@ -63,6 +63,7 @@ func UpdateInsertDimLcu(dbpool *pgxpool.Pool, cidade string) {
 			)
 			AND t.indicador_linha_valida = 'Corrente'
 			AND t.lcu_key IS DISTINCT FROM -1
+			AND t.e_instalado = 'Instalado'
 			RETURNING id_lcu, codigo_barras, deveui, nome_lcu,
 				id_exati_lcu, datahora_cadastro, cidade, latitude_lcu,
 				longitude_lcu, id_grupo_ip, nome_grupo_ip, e_instalado,
@@ -81,7 +82,7 @@ func UpdateInsertDimLcu(dbpool *pgxpool.Pool, cidade string) {
 			s.nome_lcu,
 			s.id_exati_lcu,
 			s.datahora_cadastro,
-			'%s',
+			'$1',
 			s.latitude_lcu,
 			s.longitude_lcu,
 			s.id_grupo_ip,
@@ -90,7 +91,7 @@ func UpdateInsertDimLcu(dbpool *pgxpool.Pool, cidade string) {
 			CURRENT_DATE
 		FROM removed_iot s;
 	`
-	_, err := dbpool.Exec(context.Background(), fmt.Sprintf(query, cidade, cidade))
+	_, err := dbpool.Exec(context.Background(), query, cidade)
 	if err != nil {
 		fmt.Println(err)
 	}

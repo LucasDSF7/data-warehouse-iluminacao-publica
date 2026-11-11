@@ -27,3 +27,13 @@ func SchemaStaging(dbpool *pgxpool.Pool) {
 		fmt.Println(err)
 	}
 }
+
+func SchemaTicketsIot(dbpool *pgxpool.Pool) {
+	query := `CREATE SCHEMA IF NOT EXISTS tickets;
+	COMMENT ON SCHEMA staging IS 'Schema para depósito de views relacionadas a querys relacionadas a tickets da telegestão.';
+	`
+	_, err := dbpool.Exec(context.Background(), query)
+	if err != nil {
+		fmt.Println(err)
+	}
+}

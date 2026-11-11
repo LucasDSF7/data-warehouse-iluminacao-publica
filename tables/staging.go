@@ -38,3 +38,21 @@ func StagingComunicacoesIot(dbpool *pgxpool.Pool) {
 		fmt.Println(err)
 	}
 }
+
+func StagingTicketsIot(dbpool *pgxpool.Pool) {
+	query := `CREATE TABLE IF NOT EXISTS staging.tickets_iot (
+		id_ticket VARCHAR(30),
+		deveui VARCHAR(20),
+		status VARCHAR(20),
+		tipo_ticket VARCHAR(50),
+		datahora_criacao TIMESTAMP,
+		datahora_iniciado TIMESTAMP,
+		datahora_cancelado TIMESTAMP,
+		datahora_conclusao TIMESTAMP
+	);
+	`
+	_, err := dbpool.Exec(context.Background(), query)
+	if err != nil {
+		fmt.Println(err)
+	}
+}

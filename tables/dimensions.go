@@ -85,6 +85,10 @@ func DimDataTable(dbpool *pgxpool.Pool) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	RolePlayDataCriacao(dbpool)
+	RolePlayDataIniciado(dbpool)
+	RolePlayDataCancelado(dbpool)
+	RolePlayDataConclusao(dbpool)
 }
 
 func DimLCUTable(dbpool *pgxpool.Pool) {
