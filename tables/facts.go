@@ -51,12 +51,14 @@ func FatoTicketsTelegestao(dbpool *pgxpool.Pool) {
 		data_cancelado_key INT,
 		data_conclusao_key INT,
 		lcu_key BIGINT REFERENCES dw.dim_lcu(lcu_key),
+		ponto_servico_key BIGINT REFERENCES dw.dim_ponto_servico(ponto_servico_key)
 		datahora_criacao TIMESTAMP,
 		datahora_iniciado TIMESTAMP,
 		datahora_cancelado TIMESTAMP,
 		datahora_conclusao TIMESTAMP,
 		status_ticket VARCHAR(20),
-		tipo_ticket VARCHAR(50)
+		tipo_ticket VARCHAR(50),
+		contagem_ticket INT DEFAULT 1
 	);
 
 	COMMENT ON TABLE dw.accfact_tickets_iot IS
