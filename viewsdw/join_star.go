@@ -63,3 +63,32 @@ func ViewTicketsIot(dbpool *pgxpool.Pool) {
 		fmt.Println(err)
 	}
 }
+
+func ViewLcuSnapshot(dbpool *pgxpool.Pool) {
+	query := `CREATE OR REPLACE VIEW dw.snapshot_lcu AS
+	SELECT d.data, d.dia_no_mes, d.dia_no_ano, d.nome_dia_semana,
+	d.semana_do_ano, d.numero_mes, d.nome_mes, d.ano, d.trimestre,
+	d.trimestre_ano, d.trimestre_contrato_aracaju, l.id_lcu,
+	l.codigo_barras, l.deveui, l.nome_lcu, l.id_exati_lcu,
+	l.datahora_cadastro, l.cidade, l.latitude_lcu, l.longitude_lcu,
+	l.id_grupo_ip, l.nome_grupo_ip, l.e_instalado,
+	p.id_ponto_servico, p.plaqueta, p.endereco, p.latitude, p.longitude,
+	p.bairro, p.logradouro_eixo, p.logradouro_google, p.documento_evento,
+	p.e_condominio, p.e_banco_credito, p.e_ponto_escuro, p.valor_creditos,
+	p.e_exclusividade_ip, p.altura_poste, p.tipo_altura_poste, p.tipo_poste,
+	p.e_telegestao, p.marco_telegestao, p.largura_via_veiculos,
+	p.largura_via_pedestres, p.distancia_entre_postes,
+	p.classificacao_via_veiculos, p.classificacao_via_pedestres, p.idcomando,
+	s.status
+	
+	FROM dw.periodicfact_lcu s
+
+	LEFT JOIN dw.dim_data d ON d.data_key = s.data_key
+	LEFT JOIN dw.dim_lcu l ON l.lcu_key = s.lcu_key
+	LEFT JOIN dw.dim_ponto_servico p ON p.ponto_servico_key = s.ponto_servico_key
+	`
+	_, err := dbpool.Exec(context.Background(), query)
+	if err != nil {
+		fmt.Println(err)
+	}
+}

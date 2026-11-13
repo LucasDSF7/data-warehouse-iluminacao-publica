@@ -51,7 +51,7 @@ func FatoTicketsTelegestao(dbpool *pgxpool.Pool) {
 		data_cancelado_key INT,
 		data_conclusao_key INT,
 		lcu_key BIGINT REFERENCES dw.dim_lcu(lcu_key),
-		ponto_servico_key BIGINT REFERENCES dw.dim_ponto_servico(ponto_servico_key)
+		ponto_servico_key BIGINT REFERENCES dw.dim_ponto_servico(ponto_servico_key),
 		datahora_criacao TIMESTAMP,
 		datahora_iniciado TIMESTAMP,
 		datahora_cancelado TIMESTAMP,
@@ -69,6 +69,21 @@ func FatoTicketsTelegestao(dbpool *pgxpool.Pool) {
 		id_ticket é uma degenerate dimension.';
 	COMMENT ON COLUMN dw.accfact_tickets_iot.id_ticket IS 'Degenerate dimension com id único de referência do ticket.';
 	CREATE INDEX IF NOT EXISTS idx_accfact_id_ticket ON dw.accfact_tickets_iot (id_ticket);
+	`
+	_, err := dbpool.Exec(context.Background(), query)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func FatoPeriodicSnapshotLcuIot(dbpool *pgxpool.Pool) {
+	query := `CREATE TABLE IF NOT EXISTS dw.periodicfact_lcu(
+		data_key INT REFERENCES dw.dim_data(data_key), 
+		lcu_key BIGINT REFERENCES dw.dim_lcu(lcu_key),
+		ponto_servico_key BIGINT REFERENCES dw.dim_ponto_servico(ponto_servico_key),
+		status VARCHAR(20)
+	);
+	COMMENT ON COLUMN dw.periodicfact_lcu.status IS 'Um valor entre On, Off, Pending ou Removida.';
 	`
 	_, err := dbpool.Exec(context.Background(), query)
 	if err != nil {
