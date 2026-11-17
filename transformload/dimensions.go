@@ -221,6 +221,8 @@ func MergeDimPontoServico(dbpool *pgxpool.Pool) {
 	UPDATE dw.dim_ponto_servico
 	SET data_modificacao = CURRENT_DATE
 	WHERE ponto_servico_key = -1;
+
+	TRUNCATE TABLE staging.ponto_servico;
 	`
 	_, err := dbpool.Exec(context.Background(), query)
 	if err != nil {

@@ -53,19 +53,20 @@ func MergeAccFactTicketIot(dbpool *pgxpool.Pool) {
 	datahora_cancelado = COALESCE(s.datahora_cancelado, t.datahora_cancelado),
 	datahora_conclusao = COALESCE(s.datahora_conclusao, t.datahora_conclusao),
 	tipo_ticket = COALESCE(s.tipo_ticket, t.tipo_ticket),
-	ponto_servico_key = COALESCE(s.ponto_servico_key, t.ponto_servico_key)
+	ponto_servico_key = COALESCE(s.ponto_servico_key, t.ponto_servico_key),
+	tempo_conclusao_minutos = EXTRACT(EPOCH FROM (s.datahora_conclusao - s.datahora_criacao))::int / 60
 
 	WHEN NOT MATCHED THEN
 	INSERT (
 		id_ticket, data_criacao_key, data_iniciado_key, data_cancelado_key,
 		data_conclusao_key, lcu_key, datahora_criacao, datahora_iniciado,
 		datahora_cancelado, datahora_conclusao, status_ticket, tipo_ticket,
-		ponto_servico_key
+		ponto_servico_key, tempo_conclusao_minutos
 	) VALUES (
 		s.id_ticket, s.data_criacao_key, s.data_iniciado_key, s.data_cancelado_key,
 		s.data_conclusao_key, s.lcu_key, s.datahora_criacao, s.datahora_iniciado,
 		s.datahora_cancelado, s.datahora_conclusao, s.status, s.tipo_ticket,
-		s.ponto_servico_key
+		s.ponto_servico_key, EXTRACT(EPOCH FROM (s.datahora_conclusao - s.datahora_criacao))::int / 60
 	);
 
 	TRUNCATE TABLE staging.tickets_iot;

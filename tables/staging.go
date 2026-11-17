@@ -39,6 +39,48 @@ func StagingComunicacoesIot(dbpool *pgxpool.Pool) {
 	}
 }
 
+// Granularidade dos timestamps do sistema operacional é minutos.
+func StagingOcorrencias(dbpool *pgxpool.Pool) {
+	query := `CREATE TABLE IF NOT EXISTS stating.ocorrencias (
+		id_ponto_servico INT,
+		data_hora_reclamacao TIMESTAMP WITHOUT TIMEZONE,
+		data_hora_limite_atendimento TIMESTAMP WITHOUT TIMEZONE,
+		data_hora_inicio_atendimento TIMESTAMP WITHOUT TIMEZONE,
+		data_hora_conclusao_atendimento TIMESTAMP WITHOUT TIMEZONE,
+		data_hora_autorizacao_ocorrencia TIMESTAMP WITHOUT TIMEZONE,
+		nome_reclamante VARCHAR(50),
+		telefone_reclamante VARCHAR(20),
+		bairro_ocorrencia VARCHAR(20),
+		municipio_ocorrencia VARCHAR(20),
+		status_atendimento VARCHAR(20),
+		motivo_atendimento VARCHAR(20),
+		solucao_atendimento VARCHAR(20),
+		nome_tipo_ocorrencia VARCHAR(50),
+		nome_equipe VARCHAR(20),
+		id_status_ocorrencia SMALLINT,
+		nome_status_ocorrencia VARCHAR(20),
+		nome_origem_ocorrencia VARCHAR(20),
+		id_ordem_servico INT,
+		index_ordem_servico SMALLINT,
+		id_atendimento INT,
+		latitude_ocorrencia FLOAT,
+		longitude_ocorrencia FLOAT,
+		id_ocorrencia INT,
+		index_ocorrencia SMALLINT,
+		protocolo_solicitacao text,
+		contagem_solicitacao SMALLINT,
+		contagem_atendimento SMALLINT,
+		sigla_prioridade_ocorrencia VARCHAR(10),
+		descricao_prioridade_ocorrencia VARCHAR(20),
+		id_reprogramacao_atual INT
+	);
+	`
+	_, err := dbpool.Exec(context.Background(), query)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func StagingTicketsIot(dbpool *pgxpool.Pool) {
 	query := `CREATE TABLE IF NOT EXISTS staging.tickets_iot (
 		id_ticket VARCHAR(30),

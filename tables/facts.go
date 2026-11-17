@@ -58,6 +58,7 @@ func FatoTicketsTelegestao(dbpool *pgxpool.Pool) {
 		datahora_conclusao TIMESTAMP,
 		status_ticket VARCHAR(20),
 		tipo_ticket VARCHAR(50),
+		tempo_conclusao_minutos INT,
 		contagem_ticket INT DEFAULT 1
 	);
 
