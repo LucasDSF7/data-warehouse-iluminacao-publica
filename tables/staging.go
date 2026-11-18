@@ -41,17 +41,15 @@ func StagingComunicacoesIot(dbpool *pgxpool.Pool) {
 
 // Granularidade dos timestamps do sistema operacional é minutos.
 func StagingOcorrencias(dbpool *pgxpool.Pool) {
-	query := `CREATE TABLE IF NOT EXISTS stating.ocorrencias (
+	query := `CREATE TABLE IF NOT EXISTS staging.ocorrencias (
 		id_ponto_servico INT,
-		data_hora_reclamacao TIMESTAMP WITHOUT TIMEZONE,
-		data_hora_limite_atendimento TIMESTAMP WITHOUT TIMEZONE,
-		data_hora_inicio_atendimento TIMESTAMP WITHOUT TIMEZONE,
-		data_hora_conclusao_atendimento TIMESTAMP WITHOUT TIMEZONE,
-		data_hora_autorizacao_ocorrencia TIMESTAMP WITHOUT TIMEZONE,
+		data_hora_reclamacao TIMESTAMP,
+		data_hora_limite_atendimento TIMESTAMP,
+		data_hora_inicio_atendimento TIMESTAMP,
+		data_hora_conclusao_atendimento TIMESTAMP,
+		data_hora_autorizacao_ocorrencia TIMESTAMP,
 		nome_reclamante VARCHAR(50),
-		telefone_reclamante VARCHAR(20),
-		bairro_ocorrencia VARCHAR(20),
-		municipio_ocorrencia VARCHAR(20),
+		hash_reclamante TEXT,
 		status_atendimento VARCHAR(20),
 		motivo_atendimento VARCHAR(20),
 		solucao_atendimento VARCHAR(20),

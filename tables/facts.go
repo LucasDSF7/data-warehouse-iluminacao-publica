@@ -39,6 +39,60 @@ func FatoComunicacoesIot(dbpool *pgxpool.Pool) {
 }
 
 // Accumulating Snapshot Fact Table.
+// Possui colunas datahora com as principais milestones referentes a uma ocorrência
+// de iluminação pública. Uma ocorrência é um chamado de manutenção feito por um solicitante.
+// Possui dimensões role playing de data, dimensão
+// de solicitentes, equipes e junk dimensions para flags de ocorrencia e atendimento.
+// Os fatos são o tempo transcorrido entre milestones e contagem de solicitações e
+// atendimento. O grão é uma linha por ocorrência de iluminação pública.
+func FatoAccumulatingOcorrenciaIlumincacaoPublica(dbpool *pgxpool.Pool) {
+	query := `CREATE TABLE IF NOT EXISTS dw.accfact_ocorrencias_ip(
+		data_reclamacao_key INT,
+		data_autorizacao_key INT,
+		data_atendimento_key INT,
+		data_turno_equipe_key INT,
+		data_hora_reclamacao TIMESTAMP,
+		data_hora_autorizacao_ocorrencia TIMESTAMP,
+		data_hora_ordem_servico TIMESTAMP,
+		data_hora_limite_atendimento TIMESTAMP,
+		data_hora_inicio_atendimento TIMESTAMP,
+		data_hora_conclusao_atendimento TIMESTAMP,
+		ponto_servico_key BIGINT,
+		solicitante_key BIGINT,
+		status_motivo_solucao_key BIGINT,
+		tipo_origem_status_key BIGINT,
+		equipe_key BIGINT,
+		id_ocorrencia INT, -- Degenerate Dimension
+		id_ordem_servico INT, -- Degenerate Dimension
+		index_ordem_servico SMALLINT, -- Degenerate Dimension
+		id_atendimento INT, -- Degenerate Dimension
+		id_reprogramacao INT, -- Degenerate Dimension
+		protocolo_solicitacao TEXT, -- Degenerate Dimension
+		contagem_solicitacao SMALLINT,
+		contagem_atendimento SMALLINT,
+		tempo_para_autorizacao_minutos NUMERIC,
+		tempo_para_atendimento_minutos NUMERIC,
+		duracao_atendimento_equipe_minutos NUMERIC
+	);
+	
+	COMMENT ON TABLE dw.accfact_ocorrencias_ip IS 'Accumulating Snapshot Fact Table. 
+	 Possui colunas datahora com as principais milestones referentes a uma ocorrência
+	 de iluminação pública. Uma ocorrência é um chamado de manutenção feito por um solicitante.
+	 Possui dimensões role playing de data, dimensão
+	 de solicitentes, equipes e junk dimensions para flags de ocorrencia e atendimento.
+	 Os fatos são o tempo transcorrido entre milestones e contagem de solicitações e
+	 atendimento. O grão é uma linha por ocorrência de iluminação pública.';
+
+	CREATE INDEX IF NOT EXISTS idx_accfact_id_ocorrencia ON dw.accfact_ocorrencias_ip (id_ocorrencia);
+	`
+
+	_, err := dbpool.Exec(context.Background(), query)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+// Accumulating Snapshot Fact Table.
 // Possui os principais milestones referentes a um Ticket de Telegestão.
 // Um Ticket possui data de abertura, encaminhamento, conclusão e cancelamento.
 // É um factless fact table, então será adicionada uma coluna para contagem.
