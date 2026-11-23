@@ -102,6 +102,13 @@ func DimEquipeManutencao(dbpool *pgxpool.Pool) {
 		cor_rgb_equipe VARCHAR(10)
 	);
 	COMMENT ON TABLE dw.dim_equipe_manutencao IS 'Dimensão Type I com informação sobre Equipes de manutenção de iluminação pública. Apesar de possuir poucos atributos, foi reservada uma dimensão específica dada a importância para a gerência.';
+	
+	INSERT INTO dw.dim_equipe_manutencao(
+		equipe_key, id_equipe, descricao_equipe, cor_rgb_equipe
+	)
+	VALUES (
+		-1, -1, 'Não preenchido', '#FFFFFF'
+	) ON CONFLICT (equipe_key) DO NOTHING;
 	`
 	_, err := dbpool.Exec(context.Background(), query)
 	if err != nil {
@@ -300,11 +307,23 @@ func DimTipoOrigemStatusOcorrencia(dbpool *pgxpool.Pool) {
 		cor_rgb_origem_ocorrencia VARCHAR(10),
 		id_status_ocorrencia SMALLINT,
 		descricao_status_ocorrencia VARCHAR(40),
-		sigla_prioridade_ocorrencia VARCHAR(12),
-		descricao_prioridade_ocorrencia VARCHAR(12)
+		sigla_prioridade_ocorrencia VARCHAR(15),
+		descricao_prioridade_ocorrencia VARCHAR(15)
 	);
 
 	COMMENT ON TABLE dw.dim_tipo_origem_status_ocorrencia IS 'Dimensão Type I Tipo, Origem e Status de Ocorrência de iluminação pública. É uma junk dimension formada pelo produto cartesiana das tabelas operacionais Tipo de Ocorrência, Origem de Ocorrência e Status de Ocorrência.';
+	
+	INSERT INTO dw.dim_tipo_origem_status_ocorrencia(
+		tipo_origem_status_key, id_tipo_ocorrencia, descricao_tipo_ocorrencia,
+		id_origem_ocorrencia, descricao_origem_ocorrencia,
+		cor_rgb_origem_ocorrencia, id_status_ocorrencia,
+		descricao_status_ocorrencia, sigla_prioridade_ocorrencia,
+		descricao_prioridade_ocorrencia
+	)
+	VALUES (
+		-1, -1, 'Indeterminado', -1, 'Indeterminado', '#FFFFFF', -1,
+		'Indeterminado', 'Indeterminado', 'Indeterminado'
+	) ON CONFLICT (tipo_origem_status_key) DO NOTHING;
 	`
 	_, err := dbpool.Exec(context.Background(), query)
 	if err != nil {
